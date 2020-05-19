@@ -45,20 +45,20 @@ static std::ostream& operator << (std::ostream &o, const Moon &m) {
 }
 
 // Multiple input options
-Position p_start[4] = { {-1, 0, 2},
-                        {2, -10, -7},
-                        {4, -8, 8},
-                        {3, 5, -1} };
+//Position p_start[4] = { {-1, 0, 2},
+//                        {2, -10, -7},
+//                        {4, -8, 8},
+//                        {3, 5, -1} };
 
 //Position p_start[4] = {{-8, -10, 0},
 //                       {5, 5, 10},
 //                       {2, -7, 3},
 //                       {9, -8, -3} };
 
-//Position p_start[4] = { {3, 15, 8},
-//                        {5, -1, -2},
-//                        {-10, 8, 2},
-//                        {8, 4, -5} };
+Position p_start[4] = { {3, 15, 8},
+                        {5, -1, -2},
+                        {-10, 8, 2},
+                        {8, 4, -5} };
 
 struct Moon moons[4] = { {p_start[0], p_start[0], {0, 0, 0}},
                          {p_start[1], p_start[1], {0, 0, 0}},
@@ -133,21 +133,20 @@ bool step(void)
     moons[2].p = moons[2].p + moons[2].v;
     moons[3].p = moons[3].p + moons[3].v;
 
-    bool cycle = true;
-    for (int i=0; i<4 && cycle==true; i++) {
-        if (moons[i].v.x == 0 && 
-            moons[i].v.y == 0 && 
-            moons[i].v.z == 0) {
-            if (moons[i].p.x == moons[i].p0.x && 
-                moons[i].p.y == moons[i].p0.y && 
-                moons[i].p.z == moons[i].p0.z) {
-                continue;
-            } else {
-                cycle = false;
-            }
+    bool cycle;
+    int i = 3;
+    if (moons[i].v.x == 0 && 
+        moons[i].v.y == 0 && 
+        moons[i].v.z == 0) {
+        if (moons[i].p.x == moons[i].p0.x && 
+            moons[i].p.y == moons[i].p0.y && 
+            moons[i].p.z == moons[i].p0.z) {
+            cycle = true;
         } else {
             cycle = false;
         }
+    } else {
+        cycle = false;
     }
 
     return cycle;
@@ -158,8 +157,8 @@ int main()
     bool done = false;
     long long int i = 0;
     while(!done) {
-        if (i%1000000 == 0)
-            std::cout << (long long int)(i/1000000) << "M+" << std::endl;
+        //if (i%1000000 == 0)
+        //    std::cout << (long long int)(i/1000000) << "M+" << std::endl;
         i += 1;
         done = step();
     }
