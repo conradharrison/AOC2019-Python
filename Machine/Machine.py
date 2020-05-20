@@ -20,6 +20,7 @@ class Machine():
         self.ipointer = 0
         self.relative_base = 0
         self.inputs = []
+        self.input_needed = False
         self.outputs = []
         self.output_ready = False
         self.halted = False
@@ -45,20 +46,25 @@ class Machine():
         self.ipointer = 0
         self.relative_base = 0
         self.inputs = []
+        self.input_needed = False
         self.outputs = []
         self.output_ready = False
         self.halted = False
-        self.heap[:] = 0
+        # Leave self.heap[:] as is
 
-    def run(self, stop_on_output=False):
+    def run(self, stop_on_output=False, wait_for_input=False):
 
         if stop_on_output:
-            self.outputs = []
+            self.outputs = [] # TODO: should this be the responsibility of the caller?
 
         while (True):
-            op = self.step()
+            op = self.step(wait_for_input)
             
             if self.halted == True:
+                break
+
+            if self.input_needed and wait_for_input:
+                self.input_needed = False
                 break
             
             if self.output_ready and stop_on_output:
@@ -66,13 +72,16 @@ class Machine():
                 break
         #print(self.get_state())
 
-    def step(self):
+    def step(self, wait_for_input):
         # Peek for instruction opcode
         opcode_full = self.imem[self.ipointer] % 100
         opcode = opcode_full % 100
 
-        # Call the corresponding execution unit
-        self.units[opcode].execute()
+        if wait_for_input and opcode == 3 and self.inputs == []:
+            self.input_needed = True
+        else:
+            # Call the corresponding execution unit
+            self.units[opcode].execute()
 
     def read_mem(self, addr):
         # |<---program--->|<---heap--->|<---ERROR--->|
